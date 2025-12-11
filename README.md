@@ -4,7 +4,7 @@ A full-stack resource management application for a sports facility. This system 
 
 ## Live Demo
 
-[View Live Application](https://github.com/naveenmoka/acorn-court-booking)
+[View Live Application](https://acorn-court-booking-git-main-naveens-projects-632a7abc.vercel.app?_vercel_share=pG1vhh2agYhIsLQ0kQZg0VbvEYA3BovA)
 
 ---
 
