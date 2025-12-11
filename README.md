@@ -4,7 +4,7 @@ A full-stack resource management application for a sports facility. This system 
 
 ## Live Demo
 
-[View Live Application](YOUR_VERCEL_LINK_HERE)
+[View Live Application](https://github.com/naveenmoka/acorn-court-booking)
 
 ---
 
@@ -70,7 +70,7 @@ MongoDB Atlas URI (Required for Transactions; local standalone Mongo may not sup
 
 ### Step 1: Clone the Repository
 
-git clone [https://github.com/YOUR_USERNAME/acorn-court-booking.git](https://github.com/YOUR_USERNAME/acorn-court-booking.git)
+git clone [https://github.com/naveenmoka/acorn-court-booking.git](https://github.com/naveenmoka/acorn-court-booking.git)
 cd acorn-court-booking
 
 ### Step 2: Backend Setup
