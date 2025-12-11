@@ -2,13 +2,13 @@
 
 A full-stack resource management application for a sports facility. This system handles complex **Multi-Resource Scheduling** (Courts + Coaches + Inventory) and features a **Dynamic Pricing Engine** that calculates costs in real-time based on configurable business rules.
 
-## 🚀 Live Demo
+## Live Demo
 
 [View Live Application](YOUR_VERCEL_LINK_HERE)
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
 ### 1. Multi-Resource Booking
 
@@ -30,7 +30,7 @@ A full-stack resource management application for a sports facility. This system 
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend:** React.js (Vite), Redux Toolkit, Tailwind CSS, Axios.
 - **Backend:** Node.js, Express.js.
@@ -59,7 +59,8 @@ A full-stack resource management application for a sports facility. This system 
        └── tailwind.config.js
 ```
 
-⚙️ Setup Instructions
+## ⚙️ Setup Instructions
+
 Follow these steps to run the project locally.
 
 Prerequisites
@@ -67,88 +68,104 @@ Node.js (v14+)
 
 MongoDB Atlas URI (Required for Transactions; local standalone Mongo may not support sessions).
 
-Step 1: Clone the Repository
-Bash
+### Step 1: Clone the Repository
 
 git clone [https://github.com/YOUR_USERNAME/acorn-court-booking.git](https://github.com/YOUR_USERNAME/acorn-court-booking.git)
 cd acorn-court-booking
-Step 2: Backend Setup
-Navigate to the backend:
 
-Bash
+### Step 2: Backend Setup
 
-cd backend
-Install dependencies:
+The backend handles the API, database connection, and pricing logic.
 
-Bash
+1.  **Navigate to the backend:**
 
-npm install
-Configure Environment: Create a .env file in backend/ and add:
+    ```bash
+    cd backend
+    ```
 
-Code snippet
+2.  **Install dependencies:**
 
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-Seed the Database (Required): Populate the 4 Courts, 3 Coaches, and Pricing Rules.
+    ```bash
+    npm install
+    ```
 
-Bash
+3.  **Configure Environment:**
+    Create a `.env` file in the `backend/` folder and add your MongoDB connection string:
 
-npm run seed
-Start the Server:
+    ```env
+    PORT=5000
+    MONGO_URI=your_mongodb_connection_string
+    ```
 
-Bash
+4.  **Seed the Database (Required):**
+    Populate the 4 Courts, 3 Coaches, and Pricing Rules.
 
-npm start
-Step 3: Frontend Setup
-Open a new terminal.
+    ```bash
+    npm run seed
+    ```
 
-Navigate to the frontend:
+5.  **Start the Server:**
+    ```bash
+    npm start
+    ```
 
-Bash
+### Step 3: Frontend Setup
 
-cd frontend
-Install dependencies:
+Open a new terminal window.
 
-Bash
+1.  **Navigate to the frontend:**
 
-npm install
-Start React:
+    ```bash
+    cd frontend
+    ```
 
-Bash
+2.  **Install dependencies:**
 
-npm run dev
-Visit http://localhost:5173.
+    ```bash
+    npm install
+    ```
 
-🧠 Assumptions Made
-Pricing Order: Fixed costs (Indoor Premium) are added before Multipliers (Peak Hour) to ensure the premium nature of the court is accounted for in the surge pricing.
+3.  **Start React:**
 
-Coach Fees: Coach fees are treated as flat hourly additions and are not subject to the Peak Hour multiplier.
+    ```bash
+    npm run dev
+    ```
 
-Booking Window: Bookings are restricted to 1-hour slots for the MVP.
+4.  **Access the App:**
+    Visit `http://localhost:5173`.
 
-📝 System Design & Pricing Approach (Deliverable Write-Up)
+---
 
-1. Database Design Strategy (MongoDB)
-   For this project, I chose MongoDB (NoSQL) to handle the flexible nature of the "Pricing Rules." Unlike a rigid SQL schema, MongoDB allows the admin to define complex rules (e.g., specific days, time ranges, or court types) without altering the database structure.
+## Assumptions Made
+
+- **Pricing Order:** Fixed costs (Indoor Premium) are added _before_ Multipliers (Peak Hour) to ensure the premium nature of the court is accounted for in the surge pricing.
+- **Coach Fees:** Coach fees are treated as flat hourly additions and are _not_ subject to the Peak Hour multiplier.
+- **Booking Window:** Bookings are restricted to 1-hour slots for the MVP.
+
+---
+
+## System Design & Pricing Approach (Deliverable Write-Up)
+
+### 1. Database Design Strategy (MongoDB)
+
+For this project, I chose **MongoDB** (NoSQL) to handle the flexible nature of the "Pricing Rules." Unlike a rigid SQL schema, MongoDB allows the admin to define complex rules (e.g., specific days, time ranges, or court types) without altering the database structure.
 
 I organized the database into four main collections:
 
-Courts & Coaches: Separated into distinct collections. The Court model includes a type field (Indoor vs. Outdoor), which is critical for the pricing engine to identify premium facilities.
+- **Courts & Coaches:** Separated into distinct collections. The `Court` model includes a `type` field (Indoor vs. Outdoor), which is critical for the pricing engine to identify premium facilities.
+- **PricingRules:** Instead of hardcoding logic (e.g., `if (Saturday) price += 50`), I stored rules as data. This allows business logic to be updated dynamically without code deployment.
+- **Bookings:** This collection records the transaction. Crucially, I designed the schema to store a **Pricing Breakdown Object**, not just the final total. This ensures we have a permanent audit trail showing exactly why a slot cost $150 (e.g., Base: $100 + Peak: $50).
 
-PricingRules: Instead of hardcoding logic (e.g., if (Saturday) price += 50), I stored rules as data. This allows business logic to be updated dynamically without code deployment.
+### 2. The Dynamic Pricing Engine
 
-Bookings: This collection records the transaction. Crucially, I designed the schema to store a Pricing Breakdown Object, not just the final total. This ensures we have a permanent audit trail showing exactly why a slot cost $150 (e.g., Base: $100 + Peak: $50).
+The assignment required that pricing rules "stack." I implemented a modular calculator that follows a strict **Order of Operations**:
 
-2. The Dynamic Pricing Engine
-   The assignment required that pricing rules "stack." I implemented a modular calculator that follows a strict Order of Operations:
+1.  **Base Price:** Calculates the standard rate for the duration.
+2.  **Fixed Additions:** Applies flat fees first (e.g., +$30 for Indoor).
+3.  **Multipliers:** Applies percentage surges last (e.g., x1.5 for Peak Hours).
 
-Base Price: Calculates the standard rate for the duration.
+This ensures fairness; a 50% surge applies to the _total value_ of the court, including its premium status.
 
-Fixed Additions: Applies flat fees first (e.g., +$30 for Indoor).
+### 3. Concurrency & Atomicity
 
-Multipliers: Applies percentage surges last (e.g., x1.5 for Peak Hours).
-
-This ensures fairness; a 50% surge applies to the total value of the court, including its premium status.
-
-3. Concurrency & Atomicity
-   To prevent the "Double Booking" problem, I implemented Atomic Transactions using Mongoose Sessions. When a booking request is made, the system simultaneously validates the availability of the Court, the Coach, and the Inventory. If any check fails, the transaction aborts, ensuring data consistency and preventing race conditions.
+To prevent the "Double Booking" problem, I implemented **Atomic Transactions** using Mongoose Sessions. When a booking request is made, the system simultaneously validates the availability of the Court, the Coach, and the Inventory. If any check fails, the transaction aborts, ensuring data consistency and preventing race conditions.
