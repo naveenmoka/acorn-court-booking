@@ -16,8 +16,8 @@ const BookingPage = () => {
   // Generate Slots (6 AM to 9 PM)
   const generateSlots = () => {
     const slots = [];
-    let start = 6; // 6 AM
-    for (let i = 0; i < 15; i++) { // 15 hours open
+    let start = 6; 
+    for (let i = 0; i < 15; i++) { 
       slots.push(start + i);
     }
     return slots;

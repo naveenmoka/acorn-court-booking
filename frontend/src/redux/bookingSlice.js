@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
+import { API_BASE_URL } from "../config";
 // Async action to fetch initial data
 export const fetchResources = createAsyncThunk(
   "booking/fetchResources",
   async () => {
-    const courtsRes = await axios.get("http://localhost:5000/api/courts");
-    const coachesRes = await axios.get("http://localhost:5000/api/coaches");
+    const courtsRes = await axios.get(`${API_BASE_URL}/courts`);
+    const coachesRes = await axios.get(`${API_BASE_URL}/coaches`);
     return { courts: courtsRes.data, coaches: coachesRes.data };
   }
 );

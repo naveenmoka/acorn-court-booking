@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const LivePriceReceipt = () => {
   const { selectedCourt, selectedSlot, selectedCoach, selectedDate } = useSelector((state) => state.booking);
@@ -12,7 +13,7 @@ const LivePriceReceipt = () => {
   const calculateTotal = () => {
     if (!selectedCourt || !selectedSlot) return 0;
 
-    let total = selectedCourt.basePrice; // Base Court Price
+    let total = selectedCourt.basePrice;
     
     // 1. Weekend Rule (+50)
     const day = new Date(selectedDate).getDay();
@@ -52,7 +53,7 @@ const LivePriceReceipt = () => {
       };
 
       // CALL BACKEND
-      await axios.post('http://localhost:5000/api/bookings', payload);
+      await axios.post(`${API_BASE_URL}/bookings`, payload);
       setMessage({ type: 'success', text: 'Booking Confirmed! ✅' });
     } catch (error) {
       setMessage({ type: 'error', text: error.response?.data?.message || 'Booking Failed' });
